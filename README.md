@@ -2,13 +2,13 @@
 
 EcoFinds is a React + TypeScript prototype for a sustainable marketplace. It showcases Supabase-backed auth, product listings, and a lightweight cart experience, optimized for fast local development and simple deployment. 
 
- This is a code bundle for EcoFinds Marketplace Prototype. The original project is available at https://eco---find.web.app/
+ 
 
 ---
 
 ## Live App
-EcoFinds (production):  
-https://eco---find.web.app/ [web:83][web:85]
+ This is a code bundle for EcoFinds Marketplace Prototype. The original project is available at  
+https://eco---find.web.app/ 
 
 ---
 
