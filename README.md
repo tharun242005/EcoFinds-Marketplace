@@ -1,7 +1,7 @@
 
   # EcoFinds Marketplace Prototype
 
-  This is a code bundle for EcoFinds Marketplace Prototype. The original project is available at https://www.figma.com/design/FvUzKhucrE9ecuI8V5GEPq/EcoFinds-Marketplace-Prototype.
+  This is a code bundle for EcoFinds Marketplace Prototype. The original project is available at https://eco---find.web.app/
 
   ## Running the code
 
