@@ -42,21 +42,19 @@ Use an LTS version for best compatibility. [web:66][web:67]
 1) Install dependencies:
 npm i
 
-text
+
 2) Start the dev server:
 npm run dev
 
-text
 Vite will print a local URL (typically http://localhost:5173). Open it in a browser. [web:63][web:65]
 
 3) Build for production:
 npm run build
 
-text
+
 Preview the production build locally:
 npm run preview
 
-text
 This serves the dist folder for quick validation. [web:63][web:60]
 
 ---
@@ -68,7 +66,7 @@ Create a `.env` (or `.env.local`) at the project root to configure Supabase for 
 VITE_SUPABASE_URL="https://YOUR_PROJECT_ID.supabase.co"
 VITE_SUPABASE_ANON_KEY="YOUR_PUBLIC_ANON_KEY"
 
-text
+
 
 Notes:
 - Vite only exposes vars prefixed with `VITE_` to the client. [web:63]
@@ -94,17 +92,16 @@ Recommended if the current project already lives on Firebase.
 npm i -g firebase-tools
 firebase login
 
-text
 2) Initialize (once):
 firebase init hosting
 
 Set "dist" as the public directory (for Vite), configure as single-page app (rewrite to /index.html)
-text
+
 3) Build and deploy:
 npm run build
 firebase deploy
 
-text
+
 Detailed steps in Firebase Hosting docs. [web:80]
 
 ### Netlify
