@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Sustainable Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Enhanced 3D animations */
+        @keyframes float3d {
+            0% { transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            25% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg) rotateZ(5deg); }
+            50% { transform: translateY(-20px) rotateX(10deg) rotateY(10deg) rotateZ(10deg); }
+            75% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg) rotateZ(5deg); }
+            100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+        }
+
+        .animate-float3d { animation: float3d 8s ease-in-out infinite; }
+
+        @keyframes morph {
+            0%, 100% {
+                border-radius: 60% 40% 30% 70%/60% 30% 70% 40%;
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                border-radius: 30% 60% 70% 40%/50% 60% 30% 60%;
+                transform: scale(1.1) rotate(180deg);
+            }
+        }
+
+        .animate-morph { animation: morph 6s ease-in-out infinite; }
+
+        @keyframes pulse3d {
+            0%, 100% {
+                transform: scale(1) translateZ(0);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                transform: scale(1.05) translateZ(10px);
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+        }
+
+        .animate-pulse3d { animation: pulse3d 2s infinite; }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes rotateCube {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            25% { transform: rotateX(90deg) rotateY(0deg); }
+            50% { transform: rotateX(90deg) rotateY(90deg); }
+            75% { transform: rotateX(0deg) rotateY(90deg); }
+            100% { transform: rotateX(0deg) rotateY(0deg); }
+        }
+
+        .animate-cube {
+            animation: rotateCube 4s linear infinite;
+            transform-style: preserve-3d;
+        }
+
+        .gradient-bg { background: linear-gradient(135deg, #ecfdf5, #d1fae5, #a7f3d0); }
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 32px;
+            margin: 16px 0;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-10px) rotateX(2deg);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        .hidden { display: none; }
+        .block { display: block; }
+        .flex { display: flex; }
+
+        .copyright {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(34, 197, 94, 0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 25px 50px rgba(34, 197, 94, 0.2);
+        }
+
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 4px 0;
+        }
+
+        .nav-item:hover {
+            background: rgba(34, 197, 94, 0.1);
+            transform: translateX(8px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Copyright Notice -->
+    <div class="copyright">
+        © 2025 Owned by <strong>Tharun P</strong>
+    </div>
+
+    <!-- Home Page -->
+    <div id="homePage" class="min-h-screen gradient-bg relative overflow-hidden">
+        <!-- 3D Floating Elements -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="floating-element top-20 left-10 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-float3d"></div>
+            <div class="floating-element top-40 right-20 w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg animate-morph"></div>
+            <div class="floating-element bottom-40 left-20 w-20 h-20 bg-gradient-to-br from-teal-400 to-green-500 rounded-full animate-pulse3d"></div>
+            <div class="floating-element bottom-20 right-40 w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-400 rounded-lg animate-cube"></div>
+            <div class="floating-element top-60 left-1/3 w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-float3d" style="animation-delay: 2s;"></div>
+            <div class="floating-element top-32 right-1/3 w-8 h-8 bg-gradient-to-br from-pink-400 to-purple-500 rounded-lg animate-pulse3d" style="animation-delay: 3s;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="relative z-10 flex flex-col min-h-screen">
+            <!-- Header -->
+            <header class="p-6">
+                <div class="flex items-center space-x-3 cursor-pointer group">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-all animate-pulse3d">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                        </svg>
+                    </div>
+                    <span class="text-3xl font-bold text-green-800">EcoFinds</span>
+                </div>
+            </header>
+
+            <!-- Hero Section -->
+            <main class="flex-1 flex items-center justify-center px-6">
+                <div class="max-w-6xl mx-auto text-center">
+                    <h1 class="text-6xl md:text-7xl font-bold text-green-800 mb-8 leading-tight">
+                        <div class="block bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent animate-gradient">Discover</div>
+                        <div class="block bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent animate-gradient" style="animation-delay: 0.5s;">Sustainable</div>
+                        <div class="block bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text text-transparent animate-gradient" style="animation-delay: 1s;">Treasures</div>
+                    </h1>
+                    
+                    <p class="text-xl md:text-2xl text-gray-700 mb-12 max-w-4xl mx-auto">
+                        Join thousands of conscious consumers in the world's most trusted sustainable marketplace. 
+                        Give products a second life while saving money and protecting our planet! 🌍✨
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+                        <button onclick="showAuth()" class="btn-primary text-xl transform hover:scale-110 transition-all duration-300">
+                            🚀 Start Your Journey
+                        </button>
+                        <div class="glass px-6 py-3 rounded-full">
+                            <span class="text-green-700 font-semibold">✨ 50,000+ Happy Users</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                        <div class="card text-center transform hover:scale-105 hover:-translate-y-2 transition-all duration-500">
+                            <div class="text-5xl mb-4 animate-bounce">🌱</div>
+                            <h3 class="text-xl font-bold text-green-800 mb-2">Eco-Friendly</h3>
+                            <p class="text-gray-600">Carefully curated sustainable products</p>
+                        </div>
+                        <div class="card text-center transform hover:scale-105 hover:-translate-y-2 transition-all duration-500" style="animation-delay: 0.2s;">
+                            <div class="text-5xl mb-4 animate-bounce" style="animation-delay: 0.5s;">🛒</div>
+                            <h3 class="text-xl font-bold text-blue-800 mb-2">Easy Shopping</h3>
+                            <p class="text-gray-600">Seamless and secure marketplace</p>
+                        </div>
+                        <div class="card text-center transform hover:scale-105 hover:-translate-y-2 transition-all duration-500" style="animation-delay: 0.4s;">
+                            <div class="text-5xl mb-4 animate-bounce" style="animation-delay: 1s;">❤️</div>
+                            <h3 class="text-xl font-bold text-pink-800 mb-2">Community Love</h3>
+                            <p class="text-gray-600">Connect with eco-conscious people</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer class="bg-gradient-to-r from-green-900 to-emerald-900 text-white py-8 mt-20">
+                <div class="max-w-6xl mx-auto px-6 text-center">
+                    <div class="flex items-center justify-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl font-bold">EcoFinds</span>
+                    </div>
+                    <p class="text-green-200">© 2025 EcoFinds. All rights reserved.</p>
+                    <p class="text-green-300 text-sm mt-1">Owned by <strong class="text-white">Tharun P</strong></p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Auth Page -->
+    <div id="authPage" class="hidden min-h-screen gradient-bg flex items-center justify-center px-4 relative overflow-hidden">
+        <!-- Background 3D Elements -->
+        <div class="floating-element top-10 left-10 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-float3d"></div>
+        <div class="floating-element bottom-20 right-20 w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg animate-morph"></div>
+        
+        <div class="max-w-md w-full">
+            <div class="glass rounded-2xl p-8 text-center">
+                <div class="flex items-center justify-center space-x-3 mb-8">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center animate-pulse3d">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                        </svg>
+                    </div>
+                    <span class="text-3xl font-bold text-green-800">EcoFinds</span>
+                </div>
+                
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Welcome Back! 🌱</h2>
+                
+                <form onsubmit="handleLogin(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-left text-sm font-semibold text-gray-700 mb-2">Email</label>
+                        <input 
+                            type="email" 
+                            id="email"
+                            value="demo@ecofinds.com"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none bg-white transition-all duration-300"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-left text-sm font-semibold text-gray-700 mb-2">Password</label>
+                        <input 
+                            type="password" 
+                            id="password"
+                            value="demo123"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none bg-white transition-all duration-300"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn-primary w-full text-lg">
+                        🚀 Sign In to EcoFinds
+                    </button>
+                </form>
+
+                <div class="mt-6">
+                    <div class="glass p-4 rounded-xl border border-green-200">
+                        <p class="text-green-700 font-medium text-sm">
+                            🎯 Demo Account Ready!<br>
+                            <span class="text-xs">Use the pre-filled credentials above</span>
+                        </p>
+                    </div>
+                    <button onclick="showHome()" class="text-gray-500 hover:text-green-600 font-medium mt-4 transition-colors duration-300">
+                        ← Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="hidden min-h-screen bg-gray-50">
+        <!-- Floating 3D Elements -->
+        <div class="fixed inset-0 pointer-events-none">
+            <div class="floating-element top-20 right-10 w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-float3d"></div>
+            <div class="floating-element bottom-40 left-10 w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg animate-morph" style="animation-delay: 2s;"></div>
+            <div class="floating-element top-1/2 right-20 w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-pulse3d" style="animation-delay: 4s;"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b relative z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center animate-pulse3d">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl font-bold text-green-800">EcoFinds</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">Welcome, Demo User!</span>
+                        <button onclick="logout()" class="text-red-600 hover:text-red-700 font-medium transition-colors duration-300">
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex">
+            <!-- Sidebar Navigation -->
+            <nav class="w-64 bg-white shadow-sm min-h-screen relative z-10">
+                <div class="p-4">
+                    <div class="space-y-2">
+                        <div class="nav-item active" onclick="showSection('welcome')">
+                            <div class="flex items-center">
+                                <span class="mr-3">🏠</span>
+                                <span>Welcome</span>
+                            </div>
+                        </div>
+                        <div class="nav-item" onclick="showSection('browse')">
+                            <div class="flex items-center">
+                                <span class="mr-3">🔍</span>
+                                <span>Browse Products</span>
+                            </div>
+                        </div>
+                        <div class="nav-item" onclick="showSection('add')">
+                            <div class="flex items-center">
+                                <span class="mr-3">➕</span>
+                                <span>Add Product</span>
+                            </div>
+                        </div>
+                        <div class="nav-item" onclick="showSection('listings')">
+                            <div class="flex items-center">
+                                <span class="mr-3">📝</span>
+                                <span>My Listings</span>
+                            </div>
+                        </div>
+                        <div class="nav-item" onclick="showSection('cart')">
+                            <div class="flex items-center">
+                                <span class="mr-3">🛒</span>
+                                <span>Cart</span>
+                                <span class="ml-auto bg-green-500 text-white rounded-full px-2 py-1 text-xs">3</span>
+                            </div>
+                        </div>
+                        <div class="nav-item" onclick="showSection('history')">
+                            <div class="flex items-center">
+                                <span class="mr-3">📋</span>
+                                <span>Purchase History</span>
+                            </div>
+                        </div>
+                        <div class="nav-item" onclick="showSection('profile')">
+                            <div class="flex items-center">
+                                <span class="mr-3">👤</span>
+                                <span>Profile</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6 relative z-10">
+                <!-- Welcome Section -->
+                <div id="welcomeSection" class="block">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+                            Welcome to EcoFinds! 🎉
+                            <span class="ml-3 animate-bounce">✨</span>
+                        </h1>
+                        <p class="text-xl text-gray-600">Your sustainable marketplace journey starts here</p>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="card text-center transform hover:scale-105 hover:rotate-1 transition-all duration-300">
+                            <div class="text-4xl mb-3 animate-bounce">📦</div>
+                            <div class="text-3xl font-bold text-green-600 mb-1">8</div>
+                            <div class="text-sm text-gray-600">Active Listings</div>
+                        </div>
+                        <div class="card text-center transform hover:scale-105 hover:-rotate-1 transition-all duration-300">
+                            <div class="text-4xl mb-3 animate-bounce" style="animation-delay: 0.2s;">💰</div>
+                            <div class="text-3xl font-bold text-blue-600 mb-1">15</div>
+                            <div class="text-sm text-gray-600">Items Sold</div>
+                        </div>
+                        <div class="card text-center transform hover:scale-105 hover:rotate-1 transition-all duration-300">
+                            <div class="text-4xl mb-3 animate-bounce" style="animation-delay: 0.4s;">🛒</div>
+                            <div class="text-3xl font-bold text-purple-600 mb-1">23</div>
+                            <div class="text-sm text-gray-600">Items Bought</div>
+                        </div>
+                        <div class="card text-center transform hover:scale-105 hover:-rotate-1 transition-all duration-300">
+                            <div class="text-4xl mb-3 animate-bounce" style="animation-delay: 0.6s;">⭐</div>
+                            <div class="text-3xl font-bold text-yellow-600 mb-1">4.8</div>
+                            <div class="text-sm text-gray-600">Rating</div>
+                        </div>
+                    </div>
+
+                    <!-- Environmental Impact -->
+                    <div class="section-card mb-8" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center">
+                            <span class="mr-2 animate-pulse">🌍</span>
+                            Your Environmental Impact
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center glass rounded-xl p-4 transform hover:scale-105 transition-all duration-300">
+                                <div class="text-3xl font-bold">47</div>
+                                <div class="text-green-100">Items Saved from Waste</div>
+                            </div>
+                            <div class="text-center glass rounded-xl p-4 transform hover:scale-105 transition-all duration-300">
+                                <div class="text-3xl font-bold">23.5kg</div>
+                                <div class="text-green-100">CO₂ Emissions Reduced</div>
+                            </div>
+                            <div class="text-center glass rounded-xl p-4 transform hover:scale-105 transition-all duration-300">
+                                <div class="text-3xl font-bold">1,250</div>
+                                <div class="text-green-100">EcoPoints Earned</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="section-card">
+                        <h2 class="text-2xl font-bold mb-6 flex items-center">
+                            <span class="mr-2 animate-bounce">🏆</span>
+                            Achievements
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl border-2 border-yellow-200 transform hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+                                <div class="flex items-center">
+                                    <span class="text-3xl mr-3 animate-bounce">🌱</span>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Eco Warrior</h4>
+                                        <p class="text-sm text-gray-600">Saved 20+ items from waste</p>
+                                    </div>
+                                    <span class="ml-auto bg-yellow-500 text-yellow-900 px-2 py-1 rounded-full text-xs font-semibold">
+                                        Unlocked!
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-xl border-2 border-yellow-200 transform hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+                                <div class="flex items-center">
+                                    <span class="text-3xl mr-3 animate-bounce" style="animation-delay: 0.5s;">⭐</span>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Community Star</h4>
+                                        <p class="text-sm text-gray-600">Maintained 4.5+ rating</p>
+                                    </div>
+                                    <span class="ml-auto bg-yellow-500 text-yellow-900 px-2 py-1 rounded-full text-xs font-semibold">
+                                        Unlocked!
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-xl border-2 border-gray-200 bg-gray-50 opacity-60 transform hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <span class="text-3xl mr-3 grayscale">🌿</span>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Green Seller</h4>
+                                        <p class="text-sm text-gray-600">List 10+ sustainable products</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-xl border-2 border-gray-200 bg-gray-50 opacity-60 transform hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <span class="text-3xl mr-3 grayscale">🌍</span>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Planet Hero</h4>
+                                        <p class="text-sm text-gray-600">Reduce 50kg+ CO₂ emissions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Browse Products Section -->
+                <div id="browseSection" class="hidden">
+                    <div class="section-card">
+                        <h2 class="text-3xl font-bold mb-6 flex items-center">
+                            <span class="mr-3 animate-bounce">🔍</span>
+                            Browse Sustainable Products
+                        </h2>
+                        
+                        <!-- Search Bar -->
+                        <div class="mb-8">
+                            <div class="relative max-w-md">
+                                <input type="text" placeholder="Search eco-friendly products..." class="w-full px-4 py-3 pl-12 border-2 border-green-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300">
+                                <div class="absolute left-4 top-4">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-500">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="M21 21l-4.35-4.35"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Products Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="product-card">
+                                <div class="h-48 bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center">
+                                    <span class="text-6xl">🌱</span>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-bold text-lg mb-2">Bamboo Water Bottle</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Eco-friendly bamboo water bottle with stainless steel interior</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-2xl font-bold text-green-600">$24.99</span>
+                                        <button class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="h-48 bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center">
+                                    <span class="text-6xl">👜</span>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-bold text-lg mb-2">Organic Cotton Tote</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Sustainable shopping bag made from 100% organic cotton</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-2xl font-bold text-green-600">$15.99</span>
+                                        <button class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="product-card">
+                                <div class="h-48 bg-gradient-to-br from-purple-100 to-pink-200 flex items-center justify-center">
+                                    <span class="text-6xl">☀️</span>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-bold text-lg mb-2">Solar Phone Charger</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Portable solar-powered charger for all devices</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-2xl font-bold text-green-600">$39.99</span>
+                                        <button class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Product Section -->
+                <div id="addSection" class="hidden">
+                    <div class="section-card">
+                        <h2 class="text-3xl font-bold mb-6 flex items-center">
+                            <span class="mr-3 animate-bounce">➕</span>
+                            List Your Sustainable Product
+                        </h2>
+                        
+                        <form class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Product Name</label>
+                                    <input type="text" placeholder="e.g., Eco-friendly Water Bottle" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Price ($)</label>
+                                    <input type="number" placeholder="29.99" step="0.01" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                                <textarea rows="4" placeholder="Describe your sustainable product and its eco-friendly features..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Product Images</label>
+                                <div class="border-2 border-dashed border-green-300 rounded-xl p-8 text-center hover:border-green-500 transition-all duration-300 cursor-pointer">
+                                    <div class="text-4xl mb-4 animate-bounce">📸</div>
+                                    <p class="text-gray-600 font-medium">Click to upload images or drag & drop</p>
+                                    <p class="text-gray-400 text-sm">PNG, JPG up to 10MB</p>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary w-full text-lg py-4">
+                                🚀 List My Eco Product
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- My Listings Section -->
+                <div id="listingsSection" class="hidden">
+                    <div class="section-card">
+                        <h2 class="text-3xl font-bold mb-6 flex items-center">
+                            <span class="mr-3 animate-bounce">📝</span>
+                            My Sustainable Listings
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="product-card">
+                                <div class="h-40 bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center relative">
+                                    <span class="text-5xl">🌱</span>
+                                    <div class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs">Active</div>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-bold text-lg mb-2">My Bamboo Water Bottle</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Listed 3 days ago • 12 views</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-2xl font-bold text-green-600">$24.99</span>
+                                        <div class="space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-700 px-3 py-1 border border-blue-200 rounded-lg transition-colors duration-300">Edit</button>
+                                            <button class="text-red-600 hover:text-red-700 px-3 py-1 border border-red-200 rounded-lg transition-colors duration-300">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="h-40 bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center relative">
+                                    <span class="text-5xl">📱</span>
+                                    <div class="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs">Sold</div>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-bold text-lg mb-2">Solar Charger</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Sold 1 week ago • 28 views</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-2xl font-bold text-gray-400 line-through">$39.99</span>
+                                        <div class="text-green-600 font-semibold">✅ Sold!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cart Section -->
+                <div id="cartSection" class="hidden">
+                    <div class="section-card">
+                        <h2 class="text-3xl font-bold mb-6 flex items-center">
+                            <span class="mr-3 animate-bounce">🛒</span>
+                            My Eco Cart
+                        </h2>
+                        
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center bg-white p-4 rounded-xl shadow-md">
+                                <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-200 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">🌱</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold">Bamboo Water Bottle</h3>
+                                    <p class="text-gray-600 text-sm">Eco-friendly and sustainable</p>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex items-center space-x-2">
+                                        <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors duration-300">-</button>
+                                        <span class="w-8 text-center">2</span>
+                                        <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors duration-300">+</button>
+                                    </div>
+                                    <span class="font-bold text-green-600">$49.98</span>
+                                    <button class="text-red-500 hover:text-red-700 transition-colors duration-300">🗑️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center bg-white p-4 rounded-xl shadow-md">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">👜</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold">Organic Cotton Tote</h3>
+                                    <p class="text-gray-600 text-sm">100% sustainable materials</p>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex items-center space-x-2">
+                                        <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors duration-300">-</button>
+                                        <span class="w-8 text-center">1</span>
+                                        <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors duration-300">+</button>
+                                    </div>
+                                    <span class="font-bold text-green-600">$15.99</span>
+                                    <button class="text-red-500 hover:text-red-700 transition-colors duration-300">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-lg font-medium">Total:</span>
+                                <span class="text-3xl font-bold text-green-600">$65.97</span>
+                            </div>
+                            <button class="btn-primary w-full text-lg py-4">
+                                🌟 Proceed to Eco Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase History Section -->
+                <div id="historySection" class="hidden">
+                    <div class="section-card">
+                        <h2 class="text-3xl font-bold mb-6 flex items-center">
+                            <span class="mr-3 animate-bounce">📋</span>
+                            My Sustainable Journey
+                        </h2>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-green-500">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-200 rounded-lg flex items-center justify-center mr-4">
+                                            <span class="text-xl">🌱</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold">Eco Starter Kit</h3>
+                                            <p class="text-gray-600 text-sm">Purchased on Dec 15, 2024</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-lg font-bold text-green-600">$89.99</div>
+                                        <div class="text-green-500 text-sm font-medium">✅ Delivered</div>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    🌍 Environmental Impact: Saved 2.5kg CO₂ • Earned 150 EcoPoints
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-lg flex items-center justify-center mr-4">
+                                            <span class="text-xl">☀️</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold">Solar Power Bank</h3>
+                                            <p class="text-gray-600 text-sm">Purchased on Dec 10, 2024</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-lg font-bold text-green-600">$45.99</div>
+                                        <div class="text-green-500 text-sm font-medium">✅ Delivered</div>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    🌍 Environmental Impact: Saved 1.8kg CO₂ • Earned 100 EcoPoints
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profileSection" class="hidden">
+                    <div class="section-card">
+                        <h2 class="text-3xl font-bold mb-6 flex items-center">
+                            <span class="mr-3 animate-bounce">👤</span>
+                            My Eco Profile
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <div class="text-center mb-6">
+                                    <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse3d">
+                                        <span class="text-3xl text-white">🌟</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800">Demo User</h3>
+                                    <p class="text-gray-600">EcoFinds Sustainability Champion</p>
+                                </div>
+                                
+                                <form class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                        <input type="text" value="Demo User" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                                        <input type="email" value="demo@ecofinds.com" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300" disabled>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
+                                        <textarea rows="3" placeholder="Tell us about your sustainability journey..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn-primary w-full">Update Profile</button>
+                                </form>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-xl font-bold mb-4">Sustainability Stats</h3>
+                                <div class="space-y-4">
+                                    <div class="bg-gradient-to-r from-green-100 to-emerald-100 p-4 rounded-xl">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-medium">🌱 Items Rescued</span>
+                                            <span class="font-bold text-green-600">47</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-xl">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-medium">🌍 CO₂ Saved</span>
+                                            <span class="font-bold text-blue-600">23.5kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gradient-to-r from-yellow-100 to-orange-100 p-4 rounded-xl">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-medium">⭐ EcoPoints</span>
+                                            <span class="font-bold text-yellow-600">1,250</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-xl">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-medium">🏆 Eco Level</span>
+                                            <span class="font-bold text-purple-600">Champion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t mt-16 relative z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                        <div class="w-6 h-6 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-bold text-green-800">EcoFinds</span>
+                    </div>
+                    <div class="text-center md:text-right">
+                        <p class="text-gray-600 text-sm">© 2025 EcoFinds. All rights reserved.</p>
+                        <p class="text-gray-500 text-xs mt-1">Owned by <span class="font-medium text-green-600">Tharun P</span></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let currentSection = 'welcome';
+
+        function showAuth() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('authPage').classList.remove('hidden');
+            document.getElementById('dashboardPage').classList.add('hidden');
+        }
+
+        function showHome() {
+            document.getElementById('homePage').classList.remove('hidden');
+            document.getElementById('authPage').classList.add('hidden');
+            document.getElementById('dashboardPage').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('authPage').classList.add('hidden');
+            document.getElementById('dashboardPage').classList.remove('hidden');
+            showSection('welcome');
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = ['welcome', 'browse', 'add', 'listings', 'cart', 'history', 'profile'];
+            sections.forEach(section => {
+                document.getElementById(section + 'Section').classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            currentSection = sectionName;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (email === 'demo@ecofinds.com' && password === 'demo123') {
+                showDashboard();
+            } else {
+                alert('Please use the demo credentials: demo@ecofinds.com / demo123');
+            }
+        }
+
+        function logout() {
+            showHome();
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            showHome();
+        });
+
+        // Add some interactive effects
+        document.addEventListener('mousemove', function(e) {
+            const floatingElements = document.querySelectorAll('.floating-element');
+            floatingElements.forEach((element, index) => {
+                const speed = (index + 1) * 0.02;
+                const x = (e.clientX - window.innerWidth / 2) * speed;
+                const y = (e.clientY - window.innerHeight / 2) * speed;
+                element.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
